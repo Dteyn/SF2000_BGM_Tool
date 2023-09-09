@@ -1,7 +1,6 @@
 import logging
 import numpy as np
 import os
-import pygame
 import sys
 import simpleaudio as sa
 import threading
@@ -20,7 +19,7 @@ class AudioConverterApp(QWidget):
     def __init__(self):
         super().__init__()
 
-        # Set the timer interval
+        # Set the timer interval for updating current position in ms
         self.timer_interval = 10
 
         # Set up the UI
@@ -34,13 +33,14 @@ class AudioConverterApp(QWidget):
         self.file_label = QLabel('No file selected')
         self.layout.addWidget(self.file_label)
 
+        # Select File button
         self.select_button = QPushButton('Select File')
         self.select_button.clicked.connect(self.select_file)
         self.select_button.setFixedHeight(50)
         self.select_button.setToolTip("Select the audio file to process")
         self.layout.addWidget(self.select_button)
 
-        # Create a read-only, fixed height QTextEdit to display the file information
+        # File information area
         self.file_info_text_edit = QTextEdit(self)
         self.file_info_text_edit.setReadOnly(True)
         self.file_info_text_edit.setFixedHeight(80)
@@ -49,15 +49,15 @@ class AudioConverterApp(QWidget):
         # Create a horizontal layout for the transport controls
         self.transport_layout = QHBoxLayout()
 
-        # Create and add the 'Mark In' button to the transport layout
+        # 'Mark In' Button - marks the clip starting point when playing an audio track
         self.mark_in_button = QPushButton('Mark In')
         self.mark_in_button.clicked.connect(self.mark_in)
         self.mark_in_button.setFixedHeight(40)
         self.mark_in_button.setEnabled(False)
-        self.mark_in_button.setToolTip("Set the 'In' point of the audio clip")
+        self.mark_in_button.setToolTip("Set the start point of the audio clip")
         self.transport_layout.addWidget(self.mark_in_button)
 
-        # Create and add the 'Play' button to the transport layout
+        # 'Play' Button - plays the currently selected audio file
         self.play_button = QPushButton('Play')
         self.play_button.clicked.connect(self.play_audio)
         self.play_button.setFixedHeight(40)
@@ -65,7 +65,7 @@ class AudioConverterApp(QWidget):
         self.play_button.setToolTip("Play the selected audio file")
         self.transport_layout.addWidget(self.play_button)
 
-        # Create and add the 'Stop' button to the transport layout
+        # 'Stop' button - stops playback of the currently playing file
         self.stop_button = QPushButton('Stop')
         self.stop_button.clicked.connect(self.stop_audio)
         self.stop_button.setFixedHeight(40)
@@ -73,62 +73,68 @@ class AudioConverterApp(QWidget):
         self.stop_button.setToolTip("Stop playback")
         self.transport_layout.addWidget(self.stop_button)
 
-        # Create and add the 'Mark Out' button to the transport layout
+        # 'Mark Out' Button - marks the clip ending point when playing an audio track
         self.mark_out_button = QPushButton('Mark Out')
         self.mark_out_button.clicked.connect(self.mark_out)
         self.mark_out_button.setFixedHeight(40)
         self.mark_out_button.setEnabled(False)
-        self.mark_out_button.setToolTip("Set the 'Out' point of the audio clip")
+        self.mark_out_button.setToolTip("Set the end point of the audio clip")
         self.transport_layout.addWidget(self.mark_out_button)
 
         # Add the transport layout to the main layout
         self.layout.addLayout(self.transport_layout)
 
+        # Current position label - initialize as blank and will be filled in later
         self.current_position_label = QLabel('')
         self.layout.addWidget(self.current_position_label)
 
+        # Clip length label - initialize as blank and will be filled in later
         self.clip_length_label = QLabel('')
         self.layout.addWidget(self.clip_length_label)
 
+        # 'Start Position' label and input box - the start point of the audio clip in ms
         self.start_pos_label = QLabel('Start Position (ms):')
         self.layout.addWidget(self.start_pos_label)
-
         self.start_pos = QLineEdit('0')
         self.start_pos.setToolTip("The start point of the audio clip")
         self.start_pos.textChanged.connect(self.update_clip_length)
         self.layout.addWidget(self.start_pos)
 
+        # 'End Position' label and input box
         self.end_position_label = QLabel('End Position (ms):')
         self.layout.addWidget(self.end_position_label)
-
-        self.end_position = QLineEdit('90')
+        self.end_position = QLineEdit('90000')
         self.end_position.textChanged.connect(self.update_clip_length)
         self.end_position.setToolTip("The end point of the audio clip")
         self.layout.addWidget(self.end_position)
 
+        # Gain adjustment label and input box - allows the user to raise or lower the volume of the clip
         self.gain_label = QLabel('Gain Adjustment (dB):')
         self.layout.addWidget(self.gain_label)
-
         self.gain_adjust = QLineEdit('0')
-        self.gain_adjust.setToolTip("Make the audio louder or quieter by adjusting the gain in dB (ex. +3 or -3)\n"
-                                    "NOTE: The gain level does not affect the Playback (at top). It only applies to\n"
-                                    "the Preview and Save buttons below")
+        self.gain_adjust.setToolTip("Make the audio louder or quieter by adjusting the gain in dB (ex. +3 or -3)")
         self.layout.addWidget(self.gain_adjust)
 
+        # 'Preview Full Clip' button - preview the entire audio clip and loop. Clip is pre-looped 3x to prevent delay
         self.preview_button = QPushButton('Preview Full Audio Clip')
         self.preview_button.clicked.connect(self.preview_audio)
         self.preview_button.setFixedHeight(50)
         self.preview_button.setEnabled(False)
-        self.preview_button.setToolTip("Preview the entire audio clip from start to finish, then loop")
+        self.preview_button.setToolTip("Preview the entire audio clip from start to finish, looped 3x")
         self.layout.addWidget(self.preview_button)
 
+        # 'Preview Loop Transition' button - previews the loop point in the audio clip
         self.preview_loop_button = QPushButton('Preview Loop Transition')
         self.preview_loop_button.clicked.connect(self.preview_loop_repeat)
         self.preview_loop_button.setFixedHeight(50)
         self.preview_loop_button.setEnabled(False)
-        self.preview_loop_button.setToolTip("Preview the repeat point in the looped audio clip")
+        self.preview_loop_button.setToolTip("Preview the repeat point in the looped audio clip.\n"
+                                            "Plays the last 5 seconds and first 5 seconds of the clip"
+                                            "so that you can preview how well the repeat joins up."
+                                            "NOTE: Requires a minimum 10 second audio clip")
         self.layout.addWidget(self.preview_loop_button)
 
+        # 'Stop Preview' button - stops the currently playing preview
         self.stop_preview_button = QPushButton('Stop Preview')
         self.stop_preview_button.clicked.connect(self.stop_preview)
         self.stop_preview_button.setFixedHeight(50)
@@ -136,11 +142,13 @@ class AudioConverterApp(QWidget):
         self.stop_preview_button.setToolTip("Stop playback of the preview")
         self.layout.addWidget(self.stop_preview_button)
 
+        # Divider
         divider = QFrame()
         divider.setFrameShape(QFrame.HLine)
         divider.setFrameShadow(QFrame.Sunken)
         self.layout.addWidget(divider)
 
+        # 'Save Audio Clip' Button - save the audio clip in SF2000 or .WAV/.MP3 format
         self.process_button = QPushButton('Save Audio Clip')
         self.process_button.clicked.connect(self.process_audio)
         self.process_button.setFixedHeight(80)
@@ -148,16 +156,19 @@ class AudioConverterApp(QWidget):
         self.process_button.setToolTip("Process the audio and save the audio clip to file")
         self.layout.addWidget(self.process_button)
 
+        # Set the layout and display the window
         self.setLayout(self.layout)
-        self.setWindowTitle('SF2000 BGM Tool')
+        self.setWindowTitle('Kerokero - SF2000 BGM Tool by Dteyn')
         self.show()
 
-        self.setFixedSize(self.size())  # Lock the window size
+        # Lock the window size
+        self.setFixedSize(self.size())
 
         logging.debug("Exiting init_ui method")
 
     def select_file(self):
-        logging.debug("Entering select_File method")
+        """Prompts the user to select a .WAV or .MP3 file for input, loads the file and displays information"""
+        logging.debug("Entering select_file method")
         try:
             options = QFileDialog.Options()
             options |= QFileDialog.ReadOnly
@@ -192,10 +203,6 @@ class AudioConverterApp(QWidget):
                 )
                 self.file_info_text_edit.setText(file_info_text)
 
-                # Initialize pygame mixer and load content
-                pygame.mixer.init()
-                pygame.mixer.music.load(self.audio_file)
-
                 # Set up a timer to display the current position
                 self.timer = QTimer()
                 self.timer.timeout.connect(self.update_current_position)
@@ -203,7 +210,7 @@ class AudioConverterApp(QWidget):
                 self.current_position = 0
                 self.playing = False
 
-                # Enable buttons
+                # Enable buttons in the UI
                 self.play_button.setEnabled(True)
                 self.preview_button.setEnabled(True)
                 self.preview_loop_button.setEnabled(True)
@@ -211,12 +218,16 @@ class AudioConverterApp(QWidget):
 
             else:
                 logging.debug("File selection was cancelled")
+
         except Exception as e:
             logging.error(f"An error occurred in select_file method: {e}")
             QMessageBox.critical(self, "Error", str(e))
         logging.debug("Exiting select_file method")
 
     def preview_audio(self):
+        """Previews the audio clip based on the start point and end point. Gain adjustment is applied if specified
+        Uses: pydub for processing audio and SimpleAudio for playing the preview
+        """
         logging.debug("Entering preview_audio method")
         try:
             # Get the start position, end position, and calculate the clip length
@@ -263,6 +274,10 @@ class AudioConverterApp(QWidget):
         logging.debug("Exiting preview_audio method")
 
     def preview_loop_repeat(self):
+        """Creates a section of audio of the last 5 seconds and first 5 seconds of the track to preview the transition
+        Uses: pydub for processing audio and SimpleAudio for playing the preview
+        Creates a thread for previewing the loop repeatedly
+        """
         logging.debug("Entering preview_loop_repeat method")
         try:
             # Get the start position, end position, and calculate the clip length
@@ -277,12 +292,12 @@ class AudioConverterApp(QWidget):
             # Create the preview segment
             self.preview_segment = self.audio[start_pos:end_pos]
 
-            # Pre-loop the preview segment twice to create a seamless loop
-            self.preview_segment = self.preview_segment * 2
-
             # Apply the gain adjustment if specified
             if self.gain_adjust:
                 self.preview_segment = self.preview_segment.apply_gain(self.gain_adjust.text())
+
+            # Pre-loop the preview segment twice to create a seamless loop
+            self.preview_segment = self.preview_segment * 2
 
             # Create a segment that consists of the last 5 seconds of the loop and the first 5 seconds of the loop
             loop_point = len(self.preview_segment) // 2  # Find the loop point (end of the first segment)
@@ -307,19 +322,21 @@ class AudioConverterApp(QWidget):
             # Indicate the preview is playing
             self.previewing = True
 
-            # Create a thread to handle the looping of the preview segment
+            # Create a thread so the preview will play repeatedly until stopped
             self.preview_thread = threading.Thread(target=self.loop_preview)
             self.preview_thread.start()
 
         except ValueError as e:
             QMessageBox.critical(self, "Invalid input", str(e))
             logging.error(f"Invalid input: {e}")
+
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
             logging.error(f"An error occurred: {e}")
         logging.debug("Exiting preview_loop_repeat method")
 
     def loop_preview(self):
+        """Plays the loop on repeat until Stop Preview is pressed"""
         # Play the preview loop on repeat until the 'Stop Preview' button is pressed
         while self.previewing:
             # Play the preview segment
@@ -329,6 +346,7 @@ class AudioConverterApp(QWidget):
                 time.sleep(0.1)  # Sleep to prevent busy-waiting
 
     def stop_preview(self):
+        """Stops the currently playing preview that is playing using SimpleAudio"""
         logging.debug("Entering stop_preview method")
         # Stop the preview playback
         self.previewing = False
@@ -345,6 +363,11 @@ class AudioConverterApp(QWidget):
         logging.debug("Exiting stop_preview method")
 
     def process_audio(self):
+        """Processes the audio clip based on the start and end point and applies gain if specified
+        - SF2000 format: 16-bit signed little-endian, mono, 21560 Hz (to correct for playback speed issue)
+        - WAV or MP3 format: Standard options, basic output
+        Uses: pydub to process the audio and export the audio segment
+        """
         logging.debug("Entering process_audio method")
         try:
             # Get the start position and length from the input fields
@@ -367,7 +390,6 @@ class AudioConverterApp(QWidget):
             if self.gain_adjust:
                 self.clip_segment = self.clip_segment.apply_gain(self.gain_adjust.text())
 
-
             # Create save dialog, allowing user to choose SF2000 pagefile.sys or standard .WAV file output
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
@@ -375,7 +397,9 @@ class AudioConverterApp(QWidget):
             output_file, selected_filter = QFileDialog.getSaveFileName(self, "Save File", "",
                                                                        file_filter, options=options)
 
+            # If the user specified a file to save,
             if output_file:
+                # Save as SF2000 'pagefile.sys' format if specified
                 if selected_filter == "SF2000 pagefile.sys file (*.sys)":
                     if not output_file.endswith('.sys'):
                         output_file += '.sys'
@@ -387,16 +411,18 @@ class AudioConverterApp(QWidget):
                     # Export the audio in 16-bit signed little-endian format
                     self.clip_segment.export(output_file, format="s16le")
 
+                # Save as .WAV format if specified
                 elif selected_filter == "WAV file (*.wav)":
                     if not output_file.endswith('.wav'):
                         output_file += '.wav'
                     # Export the audio in WAV format
                     self.clip_segment.export(output_file, format="wav")
 
+                # Save as .MP3 format if specified
                 elif selected_filter == "MP3 file (*.mp3)":
                     if not output_file.endswith('.mp3'):
                         output_file += '.mp3'
-                    # Export the audio in WAV format
+                    # Export the audio in MP3 format
                     self.clip_segment.export(output_file, format="mp3")
 
                 QMessageBox.information(self, "Success", f"File successfully saved as {output_file}")
@@ -410,21 +436,26 @@ class AudioConverterApp(QWidget):
         logging.debug("Exiting process_audio method")
 
     def update_clip_length(self):
+        """Updates the Clip Length label on the UI"""
         try:
             start_pos_text = self.start_pos.text()
             end_pos_text = self.end_position.text()
 
+            # Only update when there are values in both start position and end position
             if not start_pos_text or not end_pos_text:
                 return
 
+            # Convert values to float and calculate the clip length
             start_pos = float(start_pos_text)
             end_pos = float(end_pos_text)
             clip_length = end_pos - start_pos
 
+            # Format the clip length in mm:ss format, convert to integer for display
             minutes, seconds = divmod(clip_length / 1000, 60)
             clip_length_formatted = f"{int(minutes)}:{int(seconds):02d}"
-            clip_length_display = int(clip_length)  # Convert to integer for display
+            clip_length_display = int(clip_length)
 
+            # Update the clip length on the UI
             self.clip_length_label.setText(f'Clip Length: {clip_length_display} ms ({clip_length_formatted})')
 
         except ValueError as e:
@@ -432,6 +463,7 @@ class AudioConverterApp(QWidget):
             logging.error(f"Invalid input: {e}")
 
     def mark_in(self):
+        """Marks the 'Start Position' when the audio is being previewed"""
         try:
             if self.current_position:
                 self.start_pos.setText(str(self.current_position))
@@ -440,6 +472,7 @@ class AudioConverterApp(QWidget):
             logging.error(f"An error occurred: {e}")
 
     def mark_out(self):
+        """Marks the 'End Position' when the audio is being previewed"""
         try:
             self.end_position.setText(str(self.current_position))
         except Exception as e:
@@ -447,9 +480,32 @@ class AudioConverterApp(QWidget):
             logging.error(f"An error occurred: {e}")
 
     def play_audio(self):
+        """Plays the loaded audio file to preview the audio and set the Start and End points
+        Uses: pydub for processing audio and applying gain and SimpleAudio for playback
+        """
         logging.debug("Entering play_audio method")
         if not self.playing:
             try:
+                # Create a play segment from the loaded pydub audio segment
+                self.play_segment = self.audio
+
+                # Apply the gain adjustment if specified
+                if self.gain_adjust:
+                    self.play_segment = self.play_segment.apply_gain(self.gain_adjust.text())
+
+                # Convert the pydub AudioSegment to numpy array
+                self.play_samples = np.array(self.play_segment.get_array_of_samples())
+                self.play_samples = self.play_samples.reshape((-1, self.play_segment.channels))
+
+                # Reset position and start playing audio
+                self.current_position = 0
+                self.playing = True
+                self.timer.start()
+
+                # Play the preview segment using SimpleAudio
+                self.play_obj = sa.play_buffer(self.play_samples, self.play_segment.channels,
+                                               self.play_segment.sample_width, self.play_segment.frame_rate)
+
                 # Disable the 'Preview Audio' and 'Play' buttons while the audio is playing
                 self.preview_button.setEnabled(False)
                 self.preview_loop_button.setEnabled(False)
@@ -460,12 +516,9 @@ class AudioConverterApp(QWidget):
                 self.mark_out_button.setEnabled(True)
                 self.stop_button.setEnabled(True)
 
-                # Reset position and start playing audio
-                self.current_position = 0
-                self.playing = True
-                pygame.mixer.music.play(start=0)
-                self.timer.start()
-
+            except ValueError as e:
+                QMessageBox.critical(self, "Invalid input", str(e))
+                logging.error(f"Invalid input: {e}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", str(e))
                 logging.error(f"An error occurred: {e}")
@@ -485,11 +538,14 @@ class AudioConverterApp(QWidget):
 
         # Stop the audio playback and timer
         self.playing = False
-        pygame.mixer.music.stop()
+        self.play_obj.stop()
         self.timer.stop()
         logging.debug("Exiting stop_audio method")
 
     def update_current_position(self):
+        """Updates the current position label based on the timer started when playback was started
+        Will also stop the audio playback once the end of the file is reached
+        """
         # Update label to display the current position
         try:
             if self.playing:
@@ -504,22 +560,37 @@ class AudioConverterApp(QWidget):
 
                 # Stop playback once the end of the audio is reached
                 if self.current_position >= len(self.audio):
-                    self.timer.stop()
-                    self.playing = False
                     logging.info("End of audio reached, stopping playback")
+
+                    # Stop the audio playback and timer
+                    self.playing = False
+                    self.play_obj.stop()
+                    self.timer.stop()
+
+                    # Re-enable the 'Preview Audio' and 'Play' buttons when the audio stops
+                    self.preview_button.setEnabled(True)
+                    self.preview_loop_button.setEnabled(True)
+                    self.play_button.setEnabled(True)
+
+                    # Disable the 'Mark In', 'Mark Out', and 'Stop' buttons
+                    self.mark_in_button.setEnabled(False)
+                    self.mark_out_button.setEnabled(False)
+                    self.stop_button.setEnabled(False)
 
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
             logging.error(f"An error occurred: {e}")
 
+# Main entry point
+app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
+# Check if the .ico file exists
+icon_path = os.path.join(os.path.dirname(__file__), 'kerokero.ico')
+if os.path.exists(icon_path):
+    app.setWindowIcon(QIcon(icon_path))
 
-    # Check if the .ico file exists
-    icon_path = os.path.join(os.path.dirname(__file__), 'kerokero.ico')
-    if os.path.exists(icon_path):
-        app.setWindowIcon(QIcon(icon_path))
+# Run the AudioConvertApp class
+ex = AudioConverterApp()
 
-    ex = AudioConverterApp()
-    sys.exit(app.exec_())
+# Exit the application
+sys.exit(app.exec_())
