@@ -11,8 +11,8 @@ from PyQt5.QtWidgets import QApplication, QFrame, QWidget, QVBoxLayout, QPushBut
 from PyQt5.QtWidgets import QFileDialog, QLineEdit, QMessageBox, QHBoxLayout, QTextEdit
 from pydub import AudioSegment
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
+# Configure logging - set INFO, DEBUG, or ERROR level debugging
+logging.basicConfig(level=logging.INFO)
 
 
 class AudioConverterApp(QWidget):
@@ -158,7 +158,7 @@ class AudioConverterApp(QWidget):
 
         # Set the layout and display the window
         self.setLayout(self.layout)
-        self.setWindowTitle('Kerokero - SF2000 BGM Tool by Dteyn')
+        self.setWindowTitle('Kerokero - SF2000 BGM Tool')
         self.show()
 
         # Lock the window size
