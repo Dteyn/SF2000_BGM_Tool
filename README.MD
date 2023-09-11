@@ -47,6 +47,9 @@ This script requires several packages. To install the necessary packages, run th
 ```shell
 pip install numpy simpleaudio pydub PyQt5
 ```
+
+NOTE: SimpleAudio requires Microsoft Visual C++ 14.0 or greater to be installed. You can download it here: https://visualstudio.microsoft.com/visual-cpp-build-tools/ 
+
 ### Package Descriptions
 
 [NumPy](https://numpy.org/): A powerful library for working with arrays and matrices of numeric data. In this script, it is used to manipulate audio data as arrays.
