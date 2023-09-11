@@ -1,15 +1,5 @@
-import logging
-import numpy as np
-import os
-import sys
-import simpleaudio as sa
-import threading
-import time
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QFrame, QWidget, QVBoxLayout, QPushButton, QLabel
-from PyQt5.QtWidgets import QFileDialog, QLineEdit, QMessageBox, QHBoxLayout, QTextEdit
-from pydub import AudioSegment
+# Kerokero.pyw - SF2000 BGM Tool by Dteyn
+# https://github.com/Dteyn/SF2000_BGM_Tool
 
 # CONFIGURE LOGGING
 
@@ -17,6 +7,61 @@ from pydub import AudioSegment
 # Logging destinations can be ['console'], ['file'], or ['console', 'file'].
 log_level = 'DEBUG'
 log_destinations = ['console', 'file']  # If log_level is NONE, this setting is ignored
+
+
+# PACKAGE CHECK - Check if packages required are installed, if not, display an error message
+
+# Required third-party packages
+packages = {
+    "numpy": "numpy",
+    "simpleaudio": "simpleaudio",
+    "pydub": "pydub",
+    "PyQt5": "PyQt5"
+}
+
+
+def check_packages():
+    """Checks for missing packages that are required by this script"""
+    missing_packages = []
+
+    for lib_name, lib_import in packages.items():
+        try:
+            __import__(lib_import)
+        except ImportError:
+            missing_packages.append(lib_name)
+
+    return missing_packages
+
+
+def show_error_message(package_list):
+    """Displays an error message if required packages are not found"""
+    import ctypes
+    message = f"The following packages are required, but not installed: \n\n{', '.join(package_list)}\n\n\n" \
+              f"Please install the packages using 'pip install' followed by the package names. " \
+              f"Then run the script again and it should function normally."
+    ctypes.windll.user32.MessageBoxW(0, message, "Error", 0x10 | 0x0)
+
+
+# Check for missing packages, if any are missing display an error. If not, proceed with imports
+missing_packages = check_packages()
+
+if missing_packages:
+    show_error_message(missing_packages)
+else:
+    import logging
+    import numpy as np
+    import os
+    import sys
+    import simpleaudio as sa
+    import threading
+    import time
+    from PyQt5.QtCore import QTimer
+    from PyQt5.QtGui import QIcon
+    from PyQt5.QtWidgets import QApplication, QFrame, QWidget, QVBoxLayout, QPushButton, QLabel
+    from PyQt5.QtWidgets import QFileDialog, QLineEdit, QMessageBox, QHBoxLayout, QTextEdit
+    from pydub import AudioSegment
+
+
 
 
 class AudioConverterApp(QWidget):
