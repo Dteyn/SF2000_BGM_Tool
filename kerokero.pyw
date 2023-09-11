@@ -11,8 +11,12 @@ from PyQt5.QtWidgets import QApplication, QFrame, QWidget, QVBoxLayout, QPushBut
 from PyQt5.QtWidgets import QFileDialog, QLineEdit, QMessageBox, QHBoxLayout, QTextEdit
 from pydub import AudioSegment
 
-# Configure logging - set INFO, DEBUG, or ERROR level debugging
-logging.basicConfig(level=logging.INFO)
+# CONFIGURE LOGGING
+
+# Logging level can be set to INFO, DEBUG, ERROR, or NONE to disable logging
+# Logging destinations can be ['console'], ['file'], or ['console', 'file'].
+log_level = 'DEBUG'
+log_destinations = ['console', 'file']  # If log_level is NONE, this setting is ignored
 
 
 class AudioConverterApp(QWidget):
@@ -26,6 +30,7 @@ class AudioConverterApp(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        """Sets up the User Interface elements"""
         logging.debug("Entering init_ui method")
         self.layout = QVBoxLayout()
 
@@ -95,7 +100,7 @@ class AudioConverterApp(QWidget):
         # 'Start Position' label and input box - the start point of the audio clip in ms
         self.start_pos_label = QLabel('Start Position (ms):')
         self.layout.addWidget(self.start_pos_label)
-        self.start_pos = QLineEdit('0')
+        self.start_pos = QLineEdit('')
         self.start_pos.setToolTip("The start point of the audio clip")
         self.start_pos.textChanged.connect(self.update_clip_length)
         self.layout.addWidget(self.start_pos)
@@ -103,7 +108,7 @@ class AudioConverterApp(QWidget):
         # 'End Position' label and input box
         self.end_position_label = QLabel('End Position (ms):')
         self.layout.addWidget(self.end_position_label)
-        self.end_position = QLineEdit('90000')
+        self.end_position = QLineEdit('')
         self.end_position.textChanged.connect(self.update_clip_length)
         self.end_position.setToolTip("The end point of the audio clip")
         self.layout.addWidget(self.end_position)
@@ -226,7 +231,7 @@ class AudioConverterApp(QWidget):
 
     def preview_audio(self):
         """Previews the audio clip based on the start point and end point. Gain adjustment is applied if specified
-        Uses: pydub for processing audio and SimpleAudio for playing the preview
+        Uses: pydub for processing audio, NumPy for samples array and SimpleAudio for playing the preview
         """
         logging.debug("Entering preview_audio method")
         try:
@@ -270,12 +275,12 @@ class AudioConverterApp(QWidget):
             logging.error(f"Invalid input: {e}")
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
-            logging.error(f"An error occurred: {e}")
+            logging.error(f"An error occurred in preview_audio method: {e}")
         logging.debug("Exiting preview_audio method")
 
     def preview_loop_repeat(self):
         """Creates a section of audio of the last 5 seconds and first 5 seconds of the track to preview the transition
-        Uses: pydub for processing audio and SimpleAudio for playing the preview
+        Uses: pydub for processing audio, NumPy for samples array and SimpleAudio for playing the preview
         Creates a thread for previewing the loop repeatedly
         """
         logging.debug("Entering preview_loop_repeat method")
@@ -332,7 +337,7 @@ class AudioConverterApp(QWidget):
 
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
-            logging.error(f"An error occurred: {e}")
+            logging.error(f"An error occurred in preview_loop_repeat method: {e}")
         logging.debug("Exiting preview_loop_repeat method")
 
     def loop_preview(self):
@@ -432,7 +437,7 @@ class AudioConverterApp(QWidget):
 
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
-            logging.error(f"An error occurred: {e}")
+            logging.error(f"An error occurred in the process_audio method: {e}")
         logging.debug("Exiting process_audio method")
 
     def update_clip_length(self):
@@ -469,7 +474,7 @@ class AudioConverterApp(QWidget):
                 self.start_pos.setText(str(self.current_position))
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
-            logging.error(f"An error occurred: {e}")
+            logging.error(f"An error occurred in the mark_in method: {e}")
 
     def mark_out(self):
         """Marks the 'End Position' when the audio is being previewed"""
@@ -477,11 +482,11 @@ class AudioConverterApp(QWidget):
             self.end_position.setText(str(self.current_position))
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
-            logging.error(f"An error occurred: {e}")
+            logging.error(f"An error occurred in the mark_out method: {e}")
 
     def play_audio(self):
         """Plays the loaded audio file to preview the audio and set the Start and End points
-        Uses: pydub for processing audio and applying gain and SimpleAudio for playback
+        Uses: pydub for processing audio and applying gain, NumPy for array, and SimpleAudio for playback
         """
         logging.debug("Entering play_audio method")
         if not self.playing:
@@ -521,25 +526,31 @@ class AudioConverterApp(QWidget):
                 logging.error(f"Invalid input: {e}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", str(e))
-                logging.error(f"An error occurred: {e}")
+                logging.error(f"An error occurred in the play_audio method: {e}")
             logging.debug("Exiting play_audio method")
 
     def stop_audio(self):
         logging.debug("Entering stop_audio method")
-        # Re-enable the 'Preview Audio' and 'Play' buttons when the audio stops
-        self.preview_button.setEnabled(True)
-        self.preview_loop_button.setEnabled(True)
-        self.play_button.setEnabled(True)
 
-        # Disable the 'Mark In', 'Mark Out', and 'Stop' buttons
-        self.mark_in_button.setEnabled(False)
-        self.mark_out_button.setEnabled(False)
-        self.stop_button.setEnabled(False)
+        try:
+            # Re-enable the 'Preview Audio' and 'Play' buttons when the audio stops
+            self.preview_button.setEnabled(True)
+            self.preview_loop_button.setEnabled(True)
+            self.play_button.setEnabled(True)
 
-        # Stop the audio playback and timer
-        self.playing = False
-        self.play_obj.stop()
-        self.timer.stop()
+            # Disable the 'Mark In', 'Mark Out', and 'Stop' buttons
+            self.mark_in_button.setEnabled(False)
+            self.mark_out_button.setEnabled(False)
+            self.stop_button.setEnabled(False)
+
+            # Stop the audio playback and timer
+            self.playing = False
+            self.play_obj.stop()
+            self.timer.stop()
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", str(e))
+            logging.error(f"An error occurred in the stop_audio method: {e}")
         logging.debug("Exiting stop_audio method")
 
     def update_current_position(self):
@@ -579,17 +590,45 @@ class AudioConverterApp(QWidget):
 
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
-            logging.error(f"An error occurred: {e}")
+            logging.error(f"An error occurred in the update_current_position method: {e}")
 
-# Main entry point
+
+# MAIN ENTRY POINT
+
+# Create a logger
+logger = logging.getLogger()
+
+# If log_level is NONE, disable logging
+if log_level == "NONE":
+    logger.setLevel(100)  # Setting to a level higher than CRITICAL (50) to disable logging
+else:
+    logger.setLevel(getattr(logging, log_level))
+
+# Create a console handler and set the level to debug
+if 'console' in log_destinations and log_level != "NONE":
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(getattr(logging, log_level))
+    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logger.addHandler(console_handler)
+
+# Create a file handler and set the level to debug
+if 'file' in log_destinations and log_level != "NONE":
+    file_handler = logging.FileHandler('output.log', mode='w')
+    file_handler.setLevel(getattr(logging, log_level))
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logger.addHandler(file_handler)
+
+logging.debug("Script loaded - setting up application")
+
+# Set up application
 app = QApplication(sys.argv)
 
-# Check if the .ico file exists
+# Check if the .ico file exists - if so, set it as the application icon
 icon_path = os.path.join(os.path.dirname(__file__), 'kerokero.ico')
 if os.path.exists(icon_path):
     app.setWindowIcon(QIcon(icon_path))
 
-# Run the AudioConvertApp class
+# Run the AudioConvertApp class to start the application
 ex = AudioConverterApp()
 
 # Exit the application

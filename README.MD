@@ -2,7 +2,7 @@
 
 **Kerokero** is a tool designed to streamline the process of creating seamless looping audio clips. With support for both .WAV and .MP3 formats, it allows users to easily set 'in' and 'out' points, preview clips, and save their work in various formats, including a custom format specific to the Data Frog SF2000 retro handheld.
 
-![Screenshot of Kerokero running](https://github.com/Dteyn/SF2000_BGM_Tool/blob/beta/screenshot.png)
+![Screenshot of Kerokero running](https://github.com/Dteyn/SF2000_BGM_Tool/blob/master/screenshot.png)
 
 ## Features
 
