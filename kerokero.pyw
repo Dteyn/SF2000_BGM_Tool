@@ -22,15 +22,15 @@ packages = {
 
 def check_packages():
     """Checks for missing packages that are required by this script"""
-    missing_packages = []
+    packages_missing = []
 
     for lib_name, lib_import in packages.items():
         try:
             __import__(lib_import)
         except ImportError:
-            missing_packages.append(lib_name)
+            packages_missing.append(lib_name)
 
-    return missing_packages
+    return packages_missing
 
 
 def show_error_message(package_list):
@@ -60,8 +60,6 @@ else:
     from PyQt5.QtWidgets import QApplication, QFrame, QWidget, QVBoxLayout, QPushButton, QLabel
     from PyQt5.QtWidgets import QFileDialog, QLineEdit, QMessageBox, QHBoxLayout, QTextEdit
     from pydub import AudioSegment
-
-
 
 
 class AudioConverterApp(QWidget):
