@@ -50,7 +50,7 @@ pip install numpy simpleaudio pydub PyQt5
 
 NOTE: SimpleAudio requires Microsoft Visual C++ 14.0 or greater to be installed. You can download it here: https://visualstudio.microsoft.com/visual-cpp-build-tools/ 
 
-### Package Descriptions
+### Package Requirements
 
 [NumPy](https://numpy.org/): A powerful library for working with arrays and matrices of numeric data. In this script, it is used to manipulate audio data as arrays.
 
@@ -59,19 +59,6 @@ NOTE: SimpleAudio requires Microsoft Visual C++ 14.0 or greater to be installed.
 [Pydub](https://github.com/jiaaro/pydub): A high-level audio library that makes it easy to work with audio files. It is used to load and manipulate audio data in the script.
 
 [PyQt5](https://pypi.org/project/PyQt5/): A set of Python bindings for The Qt Company’s Qt application framework. It is used to create the graphical user interface for the script.
-
-
-The script also uses several built-in Python modules:
-
-**logging**: A built-in Python module for logging messages. It is used to record events occurring while the script is running.
-
-**os**: A built-in Python module that provides a way of using operating system dependent functionality, like reading or writing to the file system.
-
-**sys**: Another built-in Python module that provides access to some variables used or maintained by the interpreter and to functions that interact strongly with the interpreter.
-
-**threading**: A built-in Python module to work with threads. It is used to create a smoother user interface experience by running some tasks in separate threads.
-
-**time**: A built-in Python module that provides various time-related functions. It is used to control the timing of various operations in the script.
 
 
 ## About the Name "Kerokero"
