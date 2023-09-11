@@ -311,9 +311,12 @@ class AudioConverterApp(QWidget):
             # Enable the 'Stop Preview' button
             self.stop_preview_button.setEnabled(True)
 
-            # Play the preview segment
-            self.preview_obj = sa.play_buffer(self.preview_samples, self.preview_segment.channels,
-                                              self.preview_segment.sample_width, self.preview_segment.frame_rate)
+            # Indicate the preview is playing
+            self.previewing = True
+
+            # Create a thread so the preview will play repeatedly until stopped
+            self.preview_thread = threading.Thread(target=self.loop_preview)
+            self.preview_thread.start()
 
         except ValueError as e:
             QMessageBox.critical(self, "Invalid input", str(e))
