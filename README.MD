@@ -1,6 +1,6 @@
 # Kerokero - SF2000 BGM Tool
 
-**Kerokero** is a tool designed to streamline the process of creating background music for the SF2000 family of consoles, to replace the original main menu theme music. It allows users to import .MP3 or .WAV audio and easily set 'in' and 'out' points for a clip of up to 90 seconds. The tool can preview the clip including the transition point, and users can fine-tune the 'in' and 'out' points by the millisecond to create a seamless loop. The clip can then be saved in 'pagefile.sys' format (specific to the SF2000 family of retro handhelds), or in .MP3 or .WAV format.
+**Kerokero** is a tool designed to streamline the process of creating background music for the SF2000 family of consoles, to replace the original main menu theme music. It allows users to import .MP3 or .WAV audio and easily set 'in' and 'out' points for a clip of up to 90 seconds. Users can preview the clip including the transition point, and can fine-tune the 'in' and 'out' points by the millisecond to create a seamless loop. The clip can then be saved in `pagefile.sys` format (specific to the SF2000 family of retro handhelds), or in .MP3 or .WAV format.
 
 ![Screenshot of Kerokero running](https://github.com/Dteyn/SF2000_BGM_Tool/blob/beta/screenshot.png)
 
@@ -60,13 +60,13 @@ This script requires several packages, which are contained in `requirements.txt`
 pip install -r requirements.txt
 ```
 
-Or, simply run the `install-required-packages.bat` file which will do this for you.
+Windows users can also double-click the `install-required-packages.bat` to easily install the required packages.
 
 ### Packages Required
 
 [NumPy](https://numpy.org/): A powerful library for working with arrays and matrices of numeric data. In this script, it is used to manipulate audio data as arrays.
 
-[SimpleAudio](https://pypi.org/project/simpleaudio/): A library that provides a simple way to play audio. It is used to play the audio previews in the script.
+[sounddevice](https://python-sounddevice.readthedocs.io): A library that provides a simple way to play audio. It is used to play the audio previews in the script.
 
 [Pydub](https://github.com/jiaaro/pydub): A high-level audio library that makes it easy to work with audio files. It is used to load and manipulate audio data in the script.
 
