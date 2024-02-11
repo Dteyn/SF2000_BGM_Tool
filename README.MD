@@ -23,15 +23,26 @@
 
 ## Installation & Usage
 
-1. Ensure you have Python and the required packages installed (see below)
-2. Download the latest release from the [releases page](https://github.com/Dteyn/SF2000_BGM_Tool/releases)
-3. Run the script by double-clicking on `kerokero.pyw`
+As of version 0.2.0, Kerokero is now distributed in two versions: a standalone Python script, as well as a pre-compiled Windows executable (.EXE) using [PyInstaller](https://pyinstaller.org/).
 
-NOTE: If the script doesn't load, see 'Pre-Requisites' below.
+
+### Instructions for Standalone .EXE version:
+1. Download the latest `Kerokero-win-vx.x.x.zip` file from the [releases page](https://github.com/Dteyn/SF2000_BGM_Tool/releases)
+2. Extract the .zip file to a new folder
+3. Double click the .EXE file to start Kerokero
+
+NOTE: Windows Defender or some Anti-Virus programs may identify the .EXE file as a trojan. This is a [common issue with PyInstaller](https://www.google.com/search?q=pyinstaller+virus+warning). Since Kerokero is open source, you can review the source code by looking at the Github reposistory and see that it is not doing anything malicious: https://github.com/Dteyn/SF2000_BGM_Tool. If this warning bothers you, you can also run the Python version and avoid the .EXE file altogether.
+
+### Instructions for Python version:
+1. Ensure you have Python 3.6+ and the required packages installed (see below)
+2. Download the latest `Kerokero-python-vx.x.x.zip` file from the [releases page](https://github.com/Dteyn/SF2000_BGM_Tool/releases)
+3. Run the script by double-clicking on `kerokero.py`
+
+NOTE: If you are on Windows and want to disable the console window, rename the script to `kerokero.pyw`. By changing the extension to `pyw`, Python will not show the console window.
 
 ## Pre-Requisites
 
-Before you can run the script, you need to install Python as well as several Python packages. Here's how you can install them:
+Before you can run the script, you need to install Python 3.6+ as well as several Python packages. Here's how you can install them:
 
 ### Python
 Ensure that you have [Python 3.6+](https://www.python.org/downloads/) installed on your system. You can verify your Python installation by opening a command prompt and typing:
@@ -50,7 +61,9 @@ This script requires several packages, which are contained in `requirements.txt`
 pip install -r requirements.txt
 ```
 
-### Package Requirements
+Or, simply run the `install-required-packages.bat` file which will do this for you.
+
+### Packages Required
 
 [NumPy](https://numpy.org/): A powerful library for working with arrays and matrices of numeric data. In this script, it is used to manipulate audio data as arrays.
 
