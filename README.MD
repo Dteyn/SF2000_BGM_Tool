@@ -1,6 +1,6 @@
 # Kerokero - SF2000 BGM Tool
 
-**Kerokero** is a tool designed to streamline the process of creating seamless looping audio clips. With support for both .WAV and .MP3 formats, it allows users to easily set 'in' and 'out' points, preview clips, and save their work in various formats, including a custom format specific to the Data Frog SF2000 retro handheld.
+**Kerokero** is a tool designed to streamline the process of creating background music for the SF2000 family of consoles, to replace the original main menu theme music. It allows users to import .MP3 or .WAV audio and easily set 'in' and 'out' points for a clip of up to 90 seconds. The tool can preview the clip including the transition point, and users can fine-tune the 'in' and 'out' points by the millisecond to create a seamless loop. The clip can then be saved in 'pagefile.sys' format (specific to the SF2000 family of retro handhelds), or in .MP3 or .WAV format.
 
 ![Screenshot of Kerokero running](https://github.com/Dteyn/SF2000_BGM_Tool/blob/beta/screenshot.png)
 
@@ -9,7 +9,7 @@
 - **Load Audio Files:** Supports loading and playback of audio files in .WAV and .MP3 formats.
 - **Set In and Out Points:** Allows users to define the start ('in') and end ('out') points of the audio clip with millisecond precision.
 - **Preview Clips:** Users can preview the entire clip or just the section where the repeat occurs (at the start/end of the file).
-- **Save in Various Formats:** The edited clip can be saved in a format specific to Data Frog SF2000, as well as in .WAV or .MP3 formats.
+- **Save in Various Formats:** The edited clip can be saved in a format specific to SF2000 family of consoles, as well as in .WAV or .MP3 formats.
 - **Adjust Gain Level:** Users have the ability to adjust the gain level for both the preview and the processed audio, ensuring the output is just right.
 
 ## How to Use
@@ -34,21 +34,21 @@ NOTE: If the script doesn't load, see 'Pre-Requisites' below.
 Before you can run the script, you need to install Python as well as several Python packages. Here's how you can install them:
 
 ### Python
-Ensure that you have [Python 3.x](https://www.python.org/downloads/) installed on your system. You can verify your Python installation by opening a command prompt and typing:
+Ensure that you have [Python 3.6+](https://www.python.org/downloads/) installed on your system. You can verify your Python installation by opening a command prompt and typing:
 
 ```shell
 python --version
 ```
 
+Your Python version must be at least 3.6 or higher for this script to function.
+
 ### Installing Packages
 
-This script requires several packages. To install the necessary packages, run the following command in your terminal or command prompt:
+This script requires several packages, which are contained in `requirements.txt`. To install the necessary packages, run the following command in your terminal or command prompt:
 
 ```shell
-pip install numpy simpleaudio pydub PyQt5
+pip install -r requirements.txt
 ```
-
-NOTE: SimpleAudio requires Microsoft Visual C++ 14.0 or greater to be installed. You can download it here: https://visualstudio.microsoft.com/visual-cpp-build-tools/ 
 
 ### Package Requirements
 
@@ -73,10 +73,30 @@ Feel free to fork the repository and submit pull requests for any improvements o
 
 [CC0 1.0 Universal](LICENSE)
 
+## Changelog
+
+### v0.2.0:
+- Added the ability to save 22050 Hz `pagefile.sys` files for use with BGM Samplerate Fix.
+- Removed Windows-specific packages:
+  - Replaced `SimpleAudio` with `sounddevice`.
+  - Using `tkinter` for error message if packages are missing.
+- Added more error checking:
+  - Python version check.
+  - Added default output filename of `pagefile.sys`.
+  - Ensure user is not trying to save output file as input file.
+- Improved logging to `output.log` with more detailed information and cleaner log format.
+- Resolved all PyCharm warnings.
+- Added `requirements.txt` with required packages as well as `install-required-packages.bat` for easy installation.
+- Added `build.bat` and `versioninfo` for Windows .EXE build (thanks to tadpole author EricGoldsteinNz!).
+
+### v0.1.0:
+- Kerokero initial release.
+
 
 ## Acknowledgements
 
 - Thanks to `notv37` and `bnister` for their initial research and technical insights into the SF2000's audio format.
+- Thanks to `EricGoldsteinNz` for `build.bat` and `versioninfo` which were used to create a EXE version of Kerokero.
 - Application icon 'kerokero.ico' is from @ptra on Pixabay: https://pixabay.com/vectors/frog-animal-comic-comic-drawing-3241108/
 
 ## More Information about the Data Frog SF2000
@@ -85,6 +105,6 @@ Feel free to fork the repository and submit pull requests for any improvements o
 - [SF2000 Collection](https://zerter555.github.io/sf2000-collection/) by `Zerter` is a great place to customize your Froggy 
 - [tadpole](https://github.com/EricGoldsteinNz/tadpole) by `EricGoldsteinNz` and `BeastGriever` is the best GUI app to manage your SF2000
 - [frogtool](https://github.com/tzlion/frogtool) by `taizou` is a handy Python script for managing your SF2000 game library
-- [Retro Handhelds Discord](https://discord.gg/retrohandhelds) in the `#🐸data-frog-sf2000` (Other Devices category) is the best place to find up-to-date info and chat with other Froggy enthusiasts
+- [Retro Handhelds Discord](https://discord.gg/retrohandhelds) in the `#data-frog-sf2000` (Other Devices category) is the best place to find up-to-date info and chat with other Froggy enthusiasts
 
 
