@@ -36,6 +36,10 @@ https://dteyn.github.io/kerokero-howto/kerokero_howto.html
 
 As of version 0.2.0, Kerokero is now distributed in two versions: a Python script, as well as a Windows executable (.EXE) created using [PyInstaller](https://pyinstaller.org/).
 
+### Prerequisites
+
+This script uses PyDub, which requires [ffmpeg](https://www.ffmpeg.org) to be installed. To avoid errors, make sure you have ffmpeg installed prior to running Kerokero.
+
 ### Instructions for Standalone .EXE version:
 1. Download the latest `Kerokero-win-vx.x.x.zip` file from the [releases page](https://github.com/Dteyn/SF2000_BGM_Tool/releases)
 2. Extract the .zip file to a new folder
@@ -112,13 +116,15 @@ sudo dnf install portaudio-devel
 sudo pacman -S portaudio
 ```
 
-Also, PyDub requires ffmpeg to be installed, so make sure you have that installed as well.
+Also, as noted above, PyDub requires ffmpeg to be installed, so make sure you have that installed as well.
 
 ## Known Issues
 
-Some users encountered a 'WinError 2' error with the previous version of Kerokero (v0.1.0). I've tried to address this in v0.2.0, but if the issue still occurs, it would be helpful to have some  context on the issue. I've added more logging to the `output.log` file to help diagnose this and any other issues.
+Some users encountered a 'WinError 2' error with the previous version of Kerokero (v0.1.0). I've tried to address this in v0.2.0, but if the issue still occurs - and you have [ffmpeg](https://www.ffmpeg.org) installed - it would be helpful to have some  context on the issue. I've added more logging to the `output.log` file to help diagnose this and any other issues.
 
 If you encounter an issue, please reach out to me on GitHub or the Retro Handhelds Discord (link below). Please provide the `output.log` file as well as a detailed description of the steps taken to encounter the error.
+
+Reminder: you must have [ffmpeg](https://www.ffmpeg.org/) installed to avoid errors.
 
 ## About the Name "Kerokero"
 The name "Kerokero" is inspired by the onomatopoeic representation of a frog's croak in Japanese. In the context of this project, it symbolizes the script's ability to seamlessly loop audio clips, akin to the repetitive croaking of a frog. It embodies the script's core functionality of creating continuous, looping audio, providing users with a tool that can create immersive and uninterrupted audio experiences, much like the echoing croaks of frogs in nature.
