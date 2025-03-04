@@ -122,7 +122,7 @@ Also, as noted above, PyDub requires ffmpeg to be installed, so make sure you ha
 
 Some users encountered a 'WinError 2' error with the previous version of Kerokero (v0.1.0). I've tried to address this in v0.2.0, but if the issue still occurs - and you have [ffmpeg](https://www.ffmpeg.org) installed - it would be helpful to have some  context on the issue. I've added more logging to the `output.log` file to help diagnose this and any other issues.
 
-If you encounter an issue, please reach out to me on GitHub or the Retro Handhelds Discord (link below). Please provide the `output.log` file as well as a detailed description of the steps taken to encounter the error.
+If you encounter an issue, please create an issue on the [Issues](https://github.com/Dteyn/SF2000_BGM_Tool/issues) tab. Please provide the `output.log` file as well as a detailed description of the steps taken to encounter the error.
 
 Reminder: you must have [ffmpeg](https://www.ffmpeg.org/) installed to avoid errors.
 
@@ -170,4 +170,4 @@ Feel free to fork the repository and submit pull requests for any improvements o
 - [GB300+SF2000 Tool](https://github.com/nummacway/gb300-sf2000-tool) by `nummacway` is a great tool for managing your SF2000 and GB300 handhelds.
 - [tadpole](https://github.com/EricGoldsteinNz/tadpole) by `EricGoldsteinNz` and `BeastGriever` is the best GUI app to manage your SF2000
 - [frogtool](https://github.com/tzlion/frogtool) by `taizou` is a handy Python script for managing your SF2000 game library
-- [Retro Handhelds Discord](https://discord.gg/retrohandhelds) in the `#data-frog-sf2000` channel (Other Devices category) is the best place to find up-to-date info and chat with other Froggy enthusiasts and developers
+- [Retro Handhelds Discord](https://discord.gg/retrohandhelds) is the best place to find up-to-date info and chat with other Froggy enthusiasts and developers
