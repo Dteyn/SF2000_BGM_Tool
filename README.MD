@@ -171,3 +171,5 @@ Feel free to fork the repository and submit pull requests for any improvements o
 - [tadpole](https://github.com/EricGoldsteinNz/tadpole) by `EricGoldsteinNz` and `BeastGriever` is the best GUI app to manage your SF2000
 - [frogtool](https://github.com/tzlion/frogtool) by `taizou` is a handy Python script for managing your SF2000 game library
 - [Retro Handhelds Discord](https://discord.gg/retrohandhelds) is the best place to find up-to-date info and chat with other Froggy enthusiasts and developers
+
+You are visitor: ![Page views](https://dteyn-rad-page.netlify.app/.netlify/functions/pageviews?repo=SF2000_BGM_Tool)
